@@ -1,0 +1,25 @@
+- name: "{{ filename }} | get the extraction target dir"
+  shell:
+    cmd: 'tar -tf {{ targetpath }}/{{ filename }} | head -1 | cut -f1 -d"/"'
+  register: status
+
+- debug:
+    var: status
+  
+- set_fact:
+    extractpath: "{{ status.stdout_lines[0] }}"
+
+- name: "{{ filename }} | Expand git archive to {{ targetpath }}/{{ extractpath }}"
+  unarchive:
+    src: "{{ targetpath }}/{{ filename }}"
+    remote_src: yes
+    dest: "{{ targetpath }}"
+  register: status
+
+- set_fact:
+    workdir: "{{ targetpath }}/{{ extractpath }}"
+  when: role_params.build_dir is not defined
+
+- set_fact:
+    workdir: "{{ targetpath }}/{{ role_params.build_dir }}"
+  when: role_params.build_dir is defined

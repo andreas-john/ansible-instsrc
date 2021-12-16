@@ -1,0 +1,12 @@
+- set_fact:
+    cmd: "{{ role_params.prepare | default('./configure') }}"
+
+- name: "check if {{ workdir }} is present"
+  file:
+    path: "{{ workdir }}"
+    state: directory 
+
+- name: "{{ filename }} | executes {{ cmd }}"
+  shell:
+    cmd: '{{ cmd }}'
+    chdir: "{{ workdir }}"

@@ -1,0 +1,10 @@
+- name: "{{ filename }} | Build the default target"
+  make:
+    chdir: "{{ workdir }}"
+
+- name: "{{ filename }} | make install"
+  make:
+    chdir: "{{ workdir }}"
+    target: install
+  become: true
+  become_user: root

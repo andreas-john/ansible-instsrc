@@ -1,0 +1,71 @@
+---
+# tasks file for ansible-instsrc
+
+#- name: 'check needed variables are present'
+#  assert:
+#    that:
+#      - 'item.mandatory is "false" or {{ item.key }} is defined'
+#    msg: "role_paramss: {{ item.key }}, missing"
+#  with_items: "{{role_paramss}}"
+
+# todo check if build essentials are installed
+
+#- name: Print some debug information 
+#  vars: 
+#    msg: |
+#      Module Variables ("vars"):
+#      --------------------------------
+#      {{ vars | to_nice_json }} 
+#      
+#      Environment Variables ("environment"):
+#      --------------------------------
+#      {{ environment | to_nice_json }} 
+#      
+#      GROUP NAMES Variables ("group_names"):
+#      --------------------------------
+#      {{ group_names | to_nice_json }}
+#      
+#      GROUPS Variables ("groups"):
+#      --------------------------------
+#      {{ groups | to_nice_json }}
+#      
+#      HOST Variables ("hostvars"):
+#      --------------------------------
+#      {{ hostvars | to_nice_json }} 
+#
+#  debug: 
+#    msg: "{{ msg.split('\n') }}"       
+#  tags: DEBUG_INFO
+
+- set_fact: 
+    path: "{{ role_params.url | urlsplit('path') }}"
+#- set_fact: 
+#    filename: "{{ path | basename }}"
+#  when role_params.file is not defined
+- set_fact: 
+    filename: "{{ role_params.file | default( path | basename ) }}"
+
+- debug:
+    var: filename
+
+- import_tasks: 01_download.yml
+  become: true
+  become_user: "{{ role_params.user }}"  
+
+- import_tasks: 02_extract.yml
+  become: true
+  become_user: "{{ role_params.user }}"  
+
+- block:
+
+  - import_tasks: 03_prepare.yml
+    become: true
+    become_user: "{{ role_params.user }}"  
+
+  - import_tasks: 04_makeinstall.yml
+    become: true
+    become_user: "{{ role_params.user }}"  
+
+  when: not (role_params.download_only is defined and role_params.download_only)
+
+

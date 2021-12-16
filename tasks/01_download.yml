@@ -1,0 +1,41 @@
+- debug:
+    var: role_params
+
+- name: "{{ filename }} |  create sources directory"
+  file:
+    path: "{{ role_params.src_dir }}"
+    state: directory
+  register: status
+- set_fact: targetpath="{{status.path}}"
+
+- name: "{{ filename }} | get source package {{ role_params.url }} with checkusm verification"
+  get_url:
+    url: "{{ role_params.url }}"
+    dest: "{{ role_params.src_dir }}/{{ filename }}"
+    checksum: "{{role_params.checksum}}"
+  when: role_params.checksum is defined
+  register: status
+- set_fact: destination="{{status.dest}}"
+  when: status.changed
+
+- name: "{{ filename }} | get source package {{ role_params.url }} with checkusm verification"
+  get_url:
+    url: "{{ role_params.url }}"
+    dest: "{{ targetpath }}/{{ filename }}"
+    checksum: "{{role_params.url_checksum}}"
+  when: role_params.url_checksum is defined
+  register: status
+- set_fact: destination="{{status.dest}}"
+  when: status.changed
+
+- name: "{{ filename }} | get source {{ role_params.url }}"
+  get_url:
+    url: "{{ role_params.url }}"
+    dest: "{{ targetpath }}/{{ filename }}"
+  when: role_params.url_checksum is not defined and role_params.checksum is not defined
+  register: status
+- set_fact: destination="{{status.dest}}"
+  when: status.changed
+
+- debug:
+    var: destination

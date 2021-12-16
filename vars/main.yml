@@ -1,0 +1,15 @@
+---
+# vars file for ansible-instsrc
+# https://stackoverflow.com/questions/47877464/how-exactly-does-ansible-parse-boolean-variables
+# https://stackoverflow.com/questions/37888760/ansible-when-variable-true-not-behaving-as-expected/37895365#37895365
+
+role_params_def:
+  - user:
+      required: yes
+  - src_dir:
+      required: yes
+  - url:
+      required: yes
+  - sha:
+  - cleanup:
+      default: no
