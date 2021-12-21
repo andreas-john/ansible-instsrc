@@ -41,4 +41,4 @@ BSD
 
 Author Information
 ------------------
-Andreas JOHN, incinerator@gmx.at
+Andreas JOHN, incinerator at gmx.at
